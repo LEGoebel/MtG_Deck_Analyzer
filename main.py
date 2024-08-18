@@ -1,7 +1,18 @@
-from mtg_analyzer.scryfall_api import get_card_data
+from mtg_analyzer.deck_analyzer import parse_decklist, analyze_deck
 
 def main():
-    input_card = input("Geben Sie einen Kartennamen ein, um die Daten von scryfall.com zu erhalten.\n")
-    print(get_card_data(input_card))
+    decklist =[
+    "4 Mountain",
+    "4 Lightning Bolt",
+    "2 Sol Ring",
+    "4 Mable, Heir to Cragflame",
+    "4 Llanowar Elves"
+    ]
     
-main()
+    deck = parse_decklist(decklist)
+    analysis = analyze_deck(deck)
+    print("Mana Curve:", analysis['mana_curve'])
+    print("Color Distribution:", analysis['color_distribution'])
+
+if __name__ == "__main__":
+    main()
