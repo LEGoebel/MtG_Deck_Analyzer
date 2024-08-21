@@ -1,4 +1,5 @@
 from mtg_analyzer.deck_analyzer import parse_decklist, analyze_deck
+from discord_bot import run_bot
 
 def main():
     decklist =[
@@ -17,4 +18,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    import discord_bot
+    run_bot()
