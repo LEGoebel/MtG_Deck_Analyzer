@@ -1,8 +1,9 @@
 from typing import Final
 import os
+import csv
 from dotenv import load_dotenv
 import discord
-from mtg_analyzer.deck_analyzer import parse_decklist, analyze_deck
+from mtg_analyzer.deck_analyzer import parse_decklist, analyze_deck, create_mana_curve_chart
 from mtg_analyzer.scryfall_api import get_card_data
 
 # .env Datei laden
@@ -15,21 +16,6 @@ TOKEN: Final[str] =  os.getenv('SECRET_KEY')
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
-
-
-# async def send_message(message, user_message) -> None:
-#     if not user_message:
-#         print('(Message was empty probably because the intents are not enabled correctly!)')
-#         return
-    
-#     if is_private := user_message[0] == '?':
-#         user_message = user_message[1:]
-        
-#     try:
-#         response = get_response(user_message)
-#         await message.author.send(response) if is_private else await message.channel.send(response)
-#     except Exception as e:
-#         print(e)
 
 # Bot Startup
 @client.event
@@ -50,16 +36,45 @@ async def on_message(message):
     print(f'[{channel}] {username}: "{user_message}"')
 
     if message.content.startswith('!analyze'):
-        decklist_input = message.content[len('!analyze'):].strip().splitlines()
-        deck = parse_decklist(decklist_input)
-        analysis = analyze_deck(deck)
+        decklist_input = []
 
-        response = (
-            f"Mana Curve: {analysis['mana_curve']}\n"
-            f"Color Distribution: {analysis['color_distribution']}"
-        )
+        # Überprüfe, ob eine Textdatei angehängt ist
+        if message.attachments:
+            attachment = message.attachments[0]
+            if attachment.filename.endswith('.txt'):
+                # Lade die Textdatei herunter
+                txt_path = f"./{attachment.filename}"
+                await attachment.save(txt_path)
+                
+                # Lese die Textdatei
+                with open(txt_path, 'r', encoding='utf-8') as txtfile:
+                    decklist_input = [line.strip() for line in txtfile if line.strip()]
+                
+                # Lösche die temporäre Textdatei nach der Verarbeitung
+                os.remove(txt_path)
+            else:
+                await message.channel.send("Bitte lade eine gültige Textdatei (.txt) hoch.")
+                return
+        else:
+            decklist_input = message.content[len('!analyze'):].strip().splitlines()
 
-        await message.channel.send(response)
+        # Überprüfe das Format der Eingabe
+        if all(line.strip() and line.split(' ', 1)[0].isdigit() for line in decklist_input):
+            deck = parse_decklist(decklist_input)
+            analysis = analyze_deck(deck)
+            
+            await message.channel.send(file=discord.File('deck_analysis.png'))
+            await message.channel.send(f"Durchschnittliche CMC: {analysis['average_cmc']}")
+        else:
+            # Sende eine Fehlermeldung bei ungültiger Eingabe
+            await message.channel.send(
+                "Das Eingabeformat ist ungültig. Eine korrekte Eingabe einer Deckliste ist z.B.:\n\n"
+                "!analyze\n"
+                "4 Lightning Bolt\n"
+                "2 Llanowar Elves\n"
+                "1 Black Lotus\n"
+                "..."
+            )
 
     elif message.content.startswith('!card'):
         card_name = message.content[len('!card'):].strip()

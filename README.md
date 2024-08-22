@@ -1,23 +1,25 @@
 Magic: The Gathering Deck Analyzer Projekt
 
 Ziel:
-- Ein Magic: The Gathering Deck Analyzer, welcher einem erlaubt einzelne Karten in ein Deck hinzuzufügen,
+- Ein Magic: The Gathering Deck Analyzer, welcher einem erlaubt einzelne Karten zu analysieren (Daten von Scryfall erhalten),
   Decklisten zu laden und diese dann auf z.B. Manakosten, Farbbalance, Verteilung von Kartentypen analysiert.
 
 
 MVP:
 Input:
 - Einzelkartensuche  Done
-- Deckliste hinzufügen (.txt Datei mit # Karte in jeder einzelnen Zeile)
+- Deckliste hinzufügen (.txt Datei mit # Karte in jeder einzelnen Zeile) Done
 
 Daten:
 - Karten Abfrage per API von scryfall.com Done
-- Caching der Daten, um unnötige Abfragen zu vermeiden
+- Caching der Daten, um unnötige Abfragen zu vermeiden Done
 
 Analyzer:
-- Berechnen der Mana-Kurve (noch ohne Visualisierung, entsprechend Liste mit Index -> Anzahl Karten mit diesen Kosten)
-- Farbverteilung in %
-- Durchschnittliche Manakosten des Decks
+- Berechnen der Mana-Kurve Done
+- Visualisierung Mana- Kurve Done
+- Farbverteilung in % - Done
+- Visualisierung der Farbverteilung - Done
+- Durchschnittliche Manakosten des Decks 
 - Verteilung von Kartentypen
 
 Ausgabe:

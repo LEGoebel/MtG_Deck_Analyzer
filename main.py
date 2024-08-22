@@ -13,8 +13,8 @@ def main():
     
     deck = parse_decklist(decklist)
     analysis = analyze_deck(deck)
-    print("Mana Curve:", analysis['mana_curve'])
-    print("Color Distribution:", analysis['color_distribution'])
+    print("Mana Kurve:", analysis['mana_curve'])
+    print("Farbverteilung:", analysis['color_distribution'])
 
 if __name__ == "__main__":
     main()
