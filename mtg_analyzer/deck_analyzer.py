@@ -27,13 +27,16 @@ def analyze_deck(deck: list[dict]) -> dict:
     mana_curve = {i: 0 for i in range(11)}
     mana_curve['10+'] = 0
     total_cmc = 0
+    total_cards = 0
     
     # Farbverteilung initialisieren
     color_distribution = {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0, 'C': 0, 'M': 0}    #WUBRG + Colorless + Multicolor
     
     for card in deck:
         cmc = card.get('cmc', 0)
-        total_cmc += cmc
+        count = card.get('count', 1)
+        total_cmc += cmc * count
+        total_cards += count
         colors = card.get('colors', [])
         
         # Mana-Kurve aktualisieren
@@ -50,8 +53,8 @@ def analyze_deck(deck: list[dict]) -> dict:
         else:
             for color in colors:
                 color_distribution[color] += card['count']
-                
-    average_cmc = round(total_cmc/len(deck), 2)
+              
+    average_cmc = round(total_cmc / total_cards, 2) if total_cards > 0 else 0
         
     # Erstelle das Balkendiagramm für die Mana-Kurve
     create_combined_chart(mana_curve, color_distribution)
